@@ -1,7 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import cookieParser from 'cookie-parser'; // 1. Import cookie-parser
+import cookieParser from 'cookie-parser';
 import connectDB from './config/db.js';
 import configurePassport from './config/passport.js';
 import passport from 'passport';
@@ -11,26 +11,28 @@ dotenv.config();
 
 const app = express();
 
+// Establish Database Connection
 connectDB();
 
-// Middleware
+// Configured CORS with explicit local fallback logic
 app.use(cors({
-    origin: process.env.NODE_ENV === 'development' 
-        ? 'http://localhost:5173' 
-        : 'https://max-vibe-cart.vercel.app',
+    origin: process.env.NODE_ENV === 'production' 
+        ? 'https://max-vibe-cart.vercel.app' 
+        : 'http://localhost:5173', 
     credentials: true
 }));
-app.use(express.json());
-app.use(cookieParser()); // 2. Activate cookie parsing functionality
 
-// Initialize Passport
+app.use(express.json());
+app.use(cookieParser());
+
+// Initialize Passport Context
 app.use(passport.initialize());
 configurePassport();
 
-// Mount Routes
+// Mount Application Routes
 app.use('/api/auth', authRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-    console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+    console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
 });

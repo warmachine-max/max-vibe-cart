@@ -1,13 +1,12 @@
 import axios from 'axios';
 
-// Automatically shifts gears based on environment
-const BACKEND_URL = import.meta.env.PROD 
-    ? 'https://max-vibe-cart-server.onrender.com'  // Production backend
-    : 'http://localhost:5000';                     // Local development backend
-
 const API = axios.create({
-    baseURL: BACKEND_URL,
-    withCredentials: true
+    // Explicit fallback logic matching your updated backend structure
+    baseURL: process.env.NODE_ENV === 'production'
+        ? 'https://max-vibe-cart.vercel.app' // Replace with your actual live backend domain if different
+        : 'http://localhost:5000', 
+    
+    withCredentials: true // CRITICAL: This forces Axios to include the JWT cookie on every request
 });
 
 export default API;
