@@ -1,16 +1,16 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import cookieParser from 'cookie-parser'; // 1. Import cookie-parser
 import connectDB from './config/db.js';
 import configurePassport from './config/passport.js';
 import passport from 'passport';
-import authRoutes from './routes/authRoutes.js'; // 1. Import your new auth routes
+import authRoutes from './routes/authRoutes.js';
 
 dotenv.config();
 
 const app = express();
 
-// Connect to Database
 connectDB();
 
 // Middleware
@@ -21,18 +21,14 @@ app.use(cors({
     credentials: true
 }));
 app.use(express.json());
+app.use(cookieParser()); // 2. Activate cookie parsing functionality
 
 // Initialize Passport
 app.use(passport.initialize());
 configurePassport();
 
-// 2. Mount your Authentication Routes
+// Mount Routes
 app.use('/api/auth', authRoutes);
-
-// Sample Test Route
-app.get('/', (req, res) => {
-    res.send('API is running smoothly...');
-});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
