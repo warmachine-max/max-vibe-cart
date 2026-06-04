@@ -4,9 +4,11 @@ import 'dotenv/config';
 
 const app = express();
 
-// 1. Essential Middlewares
+// 1. Essential Middlewares - Baked with your live Vercel URL
 app.use(cors({
-    origin: process.env.NODE_ENV === 'production' ? 'https://your-frontend.vercel.app' : 'http://localhost:3000',
+    origin: process.env.NODE_ENV === 'production' 
+        ? 'https://max-vibe-cart.vercel.app' 
+        : 'http://localhost:5000', // Frontend local address (Vite usually defaults to 5173, adjust if needed)
     credentials: true
 }));
 app.use(express.json());
