@@ -1,30 +1,40 @@
 import express from 'express';
+import dotenv from 'dotenv';
 import cors from 'cors';
-import 'dotenv/config';
-import connectDB from './config/db.js'; // Import your database config
+import connectDB from './config/db.js';
+import configurePassport from './config/passport.js';
+import passport from 'passport';
+import authRoutes from './routes/authRoutes.js'; // 1. Import your new auth routes
+
+dotenv.config();
 
 const app = express();
 
-// 1. Connect to MongoDB Atlas
+// Connect to Database
 connectDB();
 
-// 2. Essential Middlewares
+// Middleware
 app.use(cors({
-    origin: process.env.NODE_ENV === 'production' 
-        ? 'https://max-vibe-cart.vercel.app' 
-        : 'http://localhost:5173', 
+    origin: process.env.NODE_ENV === 'development' 
+        ? 'http://localhost:5173' 
+        : 'https://max-vibe-cart.vercel.app',
     credentials: true
 }));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-// 3. Health Check Route
+// Initialize Passport
+app.use(passport.initialize());
+configurePassport();
+
+// 2. Mount your Authentication Routes
+app.use('/api/auth', authRoutes);
+
+// Sample Test Route
 app.get('/', (req, res) => {
-    res.status(200).json({ message: "Server is up, running, and connected to structured MongoDB!" });
+    res.send('API is running smoothly...');
 });
 
-// 4. Server Port Setup
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-    console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+    console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
 });
